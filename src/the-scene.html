@@ -1,0 +1,173 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<link rel="import" href="./sound-track.html">
+
+<dom-module id="the-scene">
+    <template>
+    <style>
+    :host {
+        --paper-progress-active-color: var(--text-color);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+    h1 {
+        @apply(--paper-font-display1);
+    }
+    audio {
+        display: block;
+    }
+
+    paper-card {
+        max-width: 600px;
+        margin: auto;
+        display: block;
+        color: var(--text-color);
+        --primary-background-color: var(--background-color);
+        --paper-card-header-color: var(--text-color);
+    }
+
+    .card-actions {
+        border-color: transparent !important;
+    }
+
+    .background {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -100;
+        transform: translateX(-50%) translateY(-50%);
+        background-size: cover;
+        transition: 1s opacity;
+        filter: blur(20px);
+    }
+
+    paper-progress {
+        display: block;
+        width: 100%;
+    }
+
+    paper-button {
+        font-size: 32px;
+        padding: 0;
+        min-width: initial;
+    }
+
+    paper-button:focus {
+        text-shadow: 0 2px 4px var(--text-color);
+    }
+    </style>
+    <video class="background" src="[[scene.background]]" autoplay loop></video>
+    <paper-card heading="[[localize(scene.name)]]" alt="[[localize(scene.name)]]">
+        <video src="[[scene.background]]" autoplay loop></video>
+        <div class="card-actions">
+            <div hidden$="[[sceneLoaded]]">
+                <paper-progress id="progress" hidden$="[[sceneLoaded]]" value="0" max="[[scene.sounds.length]]"></paper-progress>
+                [[localize('loading')]]
+            </div>
+            <div hidden$="[[!sceneLoaded]]">
+                <paper-button on-tap="_playPause" hidden$="[[hasPlayed]]" autofocus title="{{localize('play')}}">▶️</paper-button>
+                <paper-button on-tap="_playPause" hidden$="[[!hasPlayed]]" title="={{localize('play')}}/{{localize('pause')}}">⏯</paper-button>
+                <paper-button on-tap="_toggle" hidden$="[[!hasPlayed]]" title="{{localize('adjust')}}">🎚</paper-button>
+                <iron-collapse id="moreInfo" class="card-content">
+                    <template is="dom-repeat" items="[[scene.sounds]]">
+                        <sound-track sound="[[item]]"
+                            scene="[[scene]]"
+                            context="[[context]]"
+                            language="[[language]]"
+                            started="[[hasPlayed]]"></sound-track>
+                    </template>
+                </iron-collapse>
+                <paper-button on-tap="_nextScene" style="float: right" title="{{localize('next')}}">⏭</paper-button>
+
+            </div>
+        </div>
+    </paper-card>
+</template>
+
+<script>
+Polymer({
+    is: 'the-scene',
+
+    behaviors: [Polymer.AppLocalizeBehavior],
+
+    listeners: {
+        'loaded': '_updateProgress'
+    },
+
+    ready: function () {
+        this.playing = false
+        this.hasPlayed = false
+        this.loadResources(this.resolveUrl('locales.json'));
+        if ('AudioContext' in window) {
+            this.context = new AudioContext()
+        } else if ('webkitAudioContext' in window) {
+            this.context = new webkitAudioContext()
+        } else {
+            alert('audio not supported')
+        }
+        this.customStyle['--background-color'] = this.scene.backgroundColor
+        this.customStyle['--text-color'] = this.scene.textColor
+        this.customStyle['--accent-color'] = this.scene.textColor
+        this.updateStyles()
+    },
+
+    _playPause: function () {
+        if (!this.hasPlayed) {
+            this.hasPlayed = true
+        }
+        if (this.playing) {
+            this.stop()
+        } else {
+            this.context.resume()
+            this.playing = true
+        }
+    },
+
+    _updateProgress: function () {
+        this.$.progress.value += 1
+        if (this.$.progress.value === this.scene.sounds.length) {
+            this.sceneLoaded = true
+        }
+    },
+
+    _toggle: function () {
+        this.$.moreInfo.toggle();
+    },
+
+    _nextScene: function () {
+        this.stop()
+        this.fire('next-scene')
+    },
+    stop: function () {
+        if (this.context) {
+            this.context.suspend()
+            this.playing = false
+        }
+    }
+});
+</script>
+</dom-module>

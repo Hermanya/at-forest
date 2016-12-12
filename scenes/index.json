@@ -1,0 +1,91 @@
+[{
+    "name": "late-night",
+    "backgroundColor": "#02111c",
+    "textColor": "#f4ede2",
+    "background": "scenes/late-night/video.mp4",
+    "sounds": [
+        {
+            "name": "fireplace",
+            "source": "scenes/late-night/sounds/fireplace.mp3",
+            "credit": "",
+            "volume": 0.5,
+            "loop": true
+        },
+        {
+            "name": "birds",
+            "source": "scenes/late-night/sounds/birds.mp3",
+            "credit": "",
+            "volume": 1
+        }
+    ]
+}, {
+    "name": "sunrise-trail",
+    "backgroundColor": "#01002d",
+    "textColor": "#ffe39b",
+    "background": "scenes/sunrise-trail/video.mp4",
+    "sounds": [
+        {
+            "name": "crickets",
+            "source": "scenes/sunrise-trail/sounds/crickets.mp3",
+            "credit": "",
+            "volume": 0.25,
+            "loop": true
+        }
+    ]
+}, {
+    "name": "tiny-river",
+    "backgroundColor": "#0e113c",
+    "textColor": "#ffd5b3",
+    "background": "scenes/tiny-river/video.mp4",
+    "sounds": [
+        {
+            "name": "lake",
+            "source": "scenes/tiny-river/sounds/lake-shore.mp3",
+            "credit": "http://freesound.org/people/alinmear/sounds/217251/",
+            "volume": 0.25,
+            "loop": true
+        }
+    ]
+}, {
+    "name": "the-forest",
+    "backgroundColor": "#161730",
+    "textColor": "#2ca278",
+    "background": "scenes/the-forest/video.mp4",
+    "sounds": [
+        {
+            "name": "forest",
+            "source": "scenes/the-forest/sounds/forest.mp3",
+            "credit": "http://freesound.org/people/thearxx08/sounds/272417/",
+            "volume": 0.5,
+            "loop": true
+        }
+    ]
+}, {
+    "name": "rainy",
+    "backgroundColor": "#040b27",
+    "textColor": "#bbccb1",
+    "background": "scenes/rainy/video.mp4",
+    "sounds": [
+        {
+            "name": "rain-with-thunder",
+            "source": "scenes/rainy/sounds/rain-with-thunder.mp3",
+            "credit": "http://freesound.org/people/magedu/sounds/319446/",
+            "volume": 0.5,
+            "loop": true
+        }
+    ]
+}, {
+    "name": "mighty-jungle",
+    "backgroundColor": "#021f39",
+    "textColor": "#cfd5a2",
+    "background": "scenes/mighty-jungle/video.mp4",
+    "sounds": [
+        {
+            "name": "jungle-animals",
+            "source": "scenes/mighty-jungle/sounds/jungle-animals.mp3",
+            "credit": "https://www.freesound.org/people/bulj/sounds/93710/",
+            "volume": 0.5,
+            "loop": true
+        }
+    ]
+}]

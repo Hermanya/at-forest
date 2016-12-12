@@ -1,0 +1,138 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+
+<dom-module id="sound-track">
+    <template>
+    <style>
+    :host {
+        --paper-slider-active-color: var(--text-color);
+        --paper-slider-knob-color: var(--text-color);
+    }
+    </style>
+
+    [[localize(sound.name)]]:
+    <paper-slider id="volume" max="1" step="0.01" value="[[sound.volume]]"></paper-slider>
+</template>
+
+<script>
+Polymer({
+    is: 'sound-track',
+
+    properties: {
+        sound: {
+            type: Object
+        },
+        scene: {
+            type: Object
+        },
+        started: {
+            type: Boolean
+        }
+    },
+
+    behaviors: [Polymer.AppLocalizeBehavior],
+
+    listeners: {
+        'value-change': 'changeVolume'
+    },
+
+    changeVolume: function () {
+        if (this.volume) {
+            this.volume.gain.value = this.$.volume.value
+        }
+    },
+
+    observers: ['updateColors(scene)', 'loadBuffer(sound)', 'play(started)'],
+
+    updateColors: function () {
+        this.customStyle['--background-color'] = this.scene.backgroundColor
+        this.customStyle['--text-color'] = this.scene.textColor
+        this.updateStyles()
+    },
+
+    loadBuffer: function () {
+        this.cleanUp()
+        var request = new XMLHttpRequest();
+        request.open('GET', this.sound.source, true);
+        request.responseType = 'arraybuffer';
+
+        // request.addEventListener('progress', function updateProgress (oEvent) {
+        //     if (oEvent.lengthComputable) {
+        //         var percentComplete = oEvent.loaded / oEvent.total;
+        //         // ...
+        //     } else {
+        //         // Unable to compute progress information since the total size is unknown
+        //     }
+        // })
+
+        request.addEventListener('load', function (event) {
+            this.context.decodeAudioData(event.target.response, this.loaded.bind(this), this.failed.bind(this))
+        }.bind(this), false);
+        request.send();
+    },
+
+    failed: function () {
+        alert('failed to load data');
+    },
+
+    loaded: function (buffer) {
+        this.fire('loaded')
+        this.buffer = buffer
+        this.volume = this.context.createGain()
+    },
+
+    play: function () {
+        if (!this.started) {
+            return;
+        }
+        this.source = this.context.createBufferSource()
+        this.source.buffer = this.buffer
+        this.volume.gain.value = this.sound.volume
+        this.source.connect(this.volume)
+        this.volume.connect(this.context.destination)
+        this.source.loop = true
+        if (!this.sound.loop) {
+            this.scheduleDelay()
+        }
+        this.source.start(0)
+    },
+
+    scheduleDelay: function () {
+        var delay = (Math.random() + 1) * 60 * 1000
+        this.timeout = window.setTimeout(function () {
+            this.source.disconnect()
+            this.timeout = window.setTimeout(function () {
+                this.source.connect(this.volume)
+                this.scheduleDelay()
+            }.bind(this), delay)
+        }.bind(this), this.buffer.duration * 1000)
+    },
+
+    ready: function () {
+        this.loadResources(this.resolveUrl('locales.json'));
+    },
+
+    attached: function () {
+        if (this.source) {
+            this.source.connect(this.volume)
+            this.volume.connect(this.context.destination)
+        }
+    },
+
+    cleanUp: function () {
+        window.clearTimeout(this.timeout)
+        if (this.source) {
+            this.source.disconnect()
+            this.volume.disconnect()
+        }
+    },
+
+    detached: function () {
+        this.cleanUp()
+    }
+});
+</script>
+</dom-module>

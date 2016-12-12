@@ -1,0 +1,143 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+
+
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<!-- Intl polyfill -->
+<script src="../bower_components/intl/dist/Intl.min.js"></script>
+
+<link rel="import" href="the-scene.html">
+
+<dom-module id="my-app">
+    <template>
+    <style>
+    @import url('https://fonts.googleapis.com/css?family=Crimson+Text');
+    :host {
+        display: block;
+        --paper-font-common-base: {
+          font-family: 'Crimson Text', serif;
+        };
+    }
+
+    [hidden] {
+        display: none !important;
+    }
+
+    #selectLanguage {
+        position: absolute;
+        bottom: 0px;
+        right: 0.5em;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background: transparent;
+        border: none;
+        font-size: 32px;
+    }
+
+    </style>
+
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-route
+        route="{{route}}"
+        pattern=":language/:page"
+        data="{{routeData}}"></app-route>
+
+    <iron-ajax
+        auto
+        url="../scenes/index.json"
+        handle-as="json"
+        last-response="{{scenes}}"
+        on-response="select_first_scene"
+        on-error="scenes_failed_to_load"></iron-ajax>
+
+    <iron-pages selected="{{routeData.page}}" attr-for-selected="name" id="pages">
+        <template is="dom-repeat" items="[[scenes]]">
+            <the-scene
+                name="[[item.name]]"
+                selected="[[routeData.page]]"
+                scene="[[item]]"
+                language="[[routeData.language]]"></the-scene>
+        </template>
+    </iron-pages>
+
+
+    <select id="selectLanguage" value="[[routeData.language]]" on-change="_selectLanguageChanged">
+        <option value="en">🇬🇧</option>
+        <option value="ru">🇷🇺</option>
+    </select>
+
+
+
+    <!--
+    <button on-tap="login" raised hidden$="[[offline]]">{{localize('sign-in')}}</button>
+    <p class="footer" inner-h-t-m-l="{{localize('splash-footer')}}"></p>-->
+</template>
+
+<script>
+Polymer({
+    is: 'my-app',
+
+    behaviors: [
+        Polymer.AppLocalizeBehavior
+    ],
+
+    properties: {
+        offline: {
+            type: Boolean,
+            value: false
+        },
+        scenes: {
+            type: Array
+        }
+    },
+
+    listeners: {
+        'next-scene': 'next_scene'
+    },
+
+    _selectLanguageChanged: function(event) {
+        this.set('routeData.language', event.target.value);
+        switch (event.target.value) {
+            case "he":
+            case "ar":
+            case "ff":
+            case "fa":
+            case "yi":
+            case "ur":
+            document.body.style.setProperty("direction", "rtl");
+            break;
+            default:
+            document.body.style.setProperty("direction","ltr");
+        }
+    },
+
+    ready: function () {
+        this.loadResources(this.resolveUrl('locales.json'))
+        this.offline = navigator.onLine === false;
+        window.addEventListener('online', function () {
+            this.offline = false;
+        }.bind(this));
+        window.addEventListener('offline', function () {
+            this.offline = true;
+        }.bind(this));
+    },
+    next_scene: function () {
+        this.$.pages.selectNext()
+    },
+    select_first_scene: function () {
+        if (!location.hash) {
+            this.page = location.hash = 'en/' + this.scenes[0].name
+        }
+    },
+    scenes_failed_to_load: function () {
+        alert('scenes failed to load')
+    }
+});
+</script>
+</dom-module>

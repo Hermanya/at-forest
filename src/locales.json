@@ -1,0 +1,43 @@
+{
+    "en": {
+        "flag": "🇺🇸",
+        "play": "play",
+        "pause": "pause",
+        "adjust": "adjust volume",
+        "next": "next scene",
+        "loading": "loading",
+
+        "late-night": "Late night",
+        "fireplace": "Bonfire",
+        "birds": "Birds",
+
+        "sunrise-trail": "Sunrise trail",
+        "crickets": "Crickets",
+
+        "tiny-river": "Tiny river",
+        "lake-shore": "Background",
+
+        "the-forest": "The forest",
+        "rainy": "Rainy",
+        "rain-with-thunder": "Rain with thunder",
+
+        "mighty-jungle": "Mighty jungle",
+        "jungle-animals": "Jungle animals"
+    },
+    "ru": {
+        "flag": "🇷🇺",
+        "play": "проиграть",
+        "pause": "остановить",
+        "adjust": "Настроить громкость",
+        "next": "Следующийй",
+        "loading": "Загружаем",
+
+        "fire-at-night": "хижина Хагрида",
+        "crickets": "кузнечики",
+        "fireplace": "потрескивающий ",
+        "birds": "птички",
+
+        "rainy": "Дождливо",
+        "rain-with-thunder": "Дождь с грозой"
+    }
+}
