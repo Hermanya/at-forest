@@ -1,6 +1,3 @@
 bower_components/
 build/
-node_modules/
-talk-notes/
 .DS_Store
-mojibrag
