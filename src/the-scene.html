@@ -90,7 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </div>
             <div hidden$="[[!sceneLoaded]]">
                 <paper-button on-tap="_playPause" hidden$="[[hasPlayed]]" autofocus title="{{localize('play')}}">▶️</paper-button>
-                <paper-button on-tap="_playPause" hidden$="[[!hasPlayed]]" title="={{localize('play')}}/{{localize('pause')}}">⏯</paper-button>
+                <paper-button on-tap="_playPause" hidden$="[[!hasPlayed]]" title="{{localize('play')}}/{{localize('pause')}}">⏯</paper-button>
                 <paper-button on-tap="_toggle" hidden$="[[!hasPlayed]]" title="{{localize('adjust')}}">🎚</paper-button>
                 <iron-collapse id="moreInfo" class="card-content">
                     <template is="dom-repeat" items="[[scene.sounds]]">
