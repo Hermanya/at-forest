@@ -1,11 +1,11 @@
 {
     "en": {
         "flag": "🇺🇸",
-        "play": "play",
-        "pause": "pause",
-        "adjust": "adjust volume",
-        "next": "next scene",
-        "loading": "loading",
+        "play": "Play",
+        "pause": "Pause",
+        "adjust": "Adjust volume",
+        "next": "Next",
+        "loading": "Loading sounds",
 
         "late-night": "Late night",
         "fireplace": "Bonfire",
@@ -32,7 +32,7 @@
         "pause": "Остановить",
         "adjust": "Настроить громкость",
         "next": "Следующий",
-        "loading": "Загружаем",
+        "loading": "Подгружаем звуки",
 
         "late-night": "Поздняя ночь",
         "fireplace": "Костёр",

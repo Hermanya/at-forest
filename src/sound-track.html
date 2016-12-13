@@ -59,14 +59,16 @@ Polymer({
         request.open('GET', this.sound.source, true);
         request.responseType = 'arraybuffer';
 
-        // request.addEventListener('progress', function updateProgress (oEvent) {
-        //     if (oEvent.lengthComputable) {
-        //         var percentComplete = oEvent.loaded / oEvent.total;
-        //         // ...
-        //     } else {
-        //         // Unable to compute progress information since the total size is unknown
-        //     }
-        // })
+        request.addEventListener('progress', function updateProgress (oEvent) {
+            if (oEvent.lengthComputable) {
+                this.fire('loading', {
+                    name: this.sound.name,
+                    percent_complete: oEvent.loaded / oEvent.total
+                })
+            } else {
+                // Unable to compute progress information since the total size is unknown
+            }
+        }.bind(this))
 
         request.addEventListener('load', function (event) {
             this.context.decodeAudioData(event.target.response, this.loaded.bind(this), this.failed.bind(this))
@@ -79,7 +81,6 @@ Polymer({
     },
 
     loaded: function (buffer) {
-        this.fire('loaded')
         this.buffer = buffer
         this.volume = this.context.createGain()
     },

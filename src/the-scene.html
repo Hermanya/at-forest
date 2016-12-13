@@ -24,7 +24,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
     :host {
         --paper-progress-active-color: var(--text-color);
-
+        --paper-progress-container-color: transparent;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -85,8 +85,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <video src="[[scene.background]]" autoplay loop></video>
         <div class="card-actions">
             <div hidden$="[[sceneLoaded]]">
-                <paper-progress id="progress" hidden$="[[sceneLoaded]]" value="0" max="[[scene.sounds.length]]"></paper-progress>
-                [[localize('loading')]]
+                <paper-progress id="progress" hidden$="[[sceneLoaded]]" value="0" step="0.001" max="[[scene.sounds.length]]"></paper-progress>
+                ⏳[[localize('loading')]]⏳
             </div>
             <div hidden$="[[!sceneLoaded]]">
                 <paper-button on-tap="_playPause" hidden$="[[hasPlayed]]" autofocus title="{{localize('play')}}">▶️</paper-button>
@@ -115,12 +115,14 @@ Polymer({
     behaviors: [Polymer.AppLocalizeBehavior],
 
     listeners: {
-        'loaded': '_updateProgress'
+        'loading': '_updateProgress',
     },
 
     ready: function () {
         this.playing = false
         this.hasPlayed = false
+        this.sceneLoaded = false
+        this.progress_of = {}
         this.loadResources(this.resolveUrl('locales.json'));
         if ('AudioContext' in window) {
             this.context = new AudioContext()
@@ -147,9 +149,14 @@ Polymer({
         }
     },
 
-    _updateProgress: function () {
-        this.$.progress.value += 1
-        if (this.$.progress.value === this.scene.sounds.length) {
+    _updateProgress: function (event) {
+        var sound = event.detail
+        this.progress_of[sound.name] = sound.percent_complete
+        var overall_progress = Object.keys(this.progress_of).reduce(function (sum, name) {
+            return sum + this.progress_of[name]
+        }.bind(this), 0)
+        this.$.progress.value = overall_progress
+        if (overall_progress === this.scene.sounds.length) {
             this.sceneLoaded = true
         }
     },
